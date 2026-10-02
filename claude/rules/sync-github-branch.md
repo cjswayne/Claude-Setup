@@ -1,0 +1,53 @@
+---
+description: "Sync the current local branch with its GitHub remote before starting work"
+---
+
+# Keep the Current GitHub Branch Up to Date
+
+Before editing files, committing, or opening a PR, make sure the **current** local branch matches its GitHub remote. Do not switch branches unless the user asked.
+
+## Required check (repo you are about to change)
+
+```bash
+git fetch origin
+git status -sb
+git rev-parse --abbrev-ref HEAD
+git rev-parse --abbrev-ref @{u}
+```
+
+If the branch has no upstream, stop and tell the user. Do not invent a remote.
+
+## Shopify theme caveat
+
+If the repo or current work is a **Shopify theme**, do **not** auto-sync (`git pull`, fast-forward, or overwrite local files). Stop after the required check and **ask the user** whether they want to sync.
+
+Reasons:
+
+- A theme preview / `shopify theme dev` server may be running and watching local files
+- GitHub may not be the latest source of truth; unpublished or live theme files on Shopify can be newer than `origin`
+
+```text
+❌ BAD — pull origin on a theme repo without asking
+✅ GOOD — report fetch status, then ask: "Theme repo — sync from GitHub, or keep local / Shopify as source of truth?"
+```
+
+## Sync when behind
+
+Skip this auto-pull for Shopify theme work; ask first (see caveat above).
+
+- Working tree **clean** and local is **behind** `origin/<current-branch>`: `git pull --ff-only`
+- Working tree **dirty**, histories **diverged**, or `--ff-only` **fails**: stop. Report status and wait for the user. Do not rebase, merge, stash, reset, or force-push unless they ask.
+
+```text
+❌ BAD — start coding on a stale local copy of feature/foo
+✅ GOOD — fetch, confirm origin/feature/foo, fast-forward if behind and clean, then start
+
+❌ BAD — git checkout main (or another branch) to "get latest" without being asked
+✅ GOOD — update the branch you are already on
+```
+
+## Limits
+
+- Only run these git commands in the repository you are about to change
+- Never use `--force`, hard reset, or skip hooks
+- Multi-root workspace: sync that repo only, not every folder

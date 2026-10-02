@@ -1,0 +1,38 @@
+---
+description: "Ask before doing work the user did not explicitly request; do not silently expand scope"
+---
+
+# Ask Before Extra Work
+
+Only implement what the user explicitly asked for. If you notice related cleanup, refactors, unused settings, dead code, renames, schema trims, or other improvements that were **not** requested, stop and ask whether to do them. Do not apply those changes on your own.
+
+## Required behavior
+
+1. **Stick to the ask.** Implement only the stated goal (e.g. fix height warping). Do not bundle unrequested edits.
+2. **Surface extras as questions.** When you spot optional work, briefly describe it and ask for approval before changing files.
+3. **No silent scope expansion.** "While I'm here" cleanups are not allowed unless the user already approved them in this conversation.
+
+## Examples
+
+```text
+User: Fix the section height so images aren't warped.
+
+❌ BAD — also delete unused schema settings / dead CSS / unused Liquid vars without asking
+✅ GOOD — fix the height CSS only; then ask:
+  "I also see unused schema settings X/Y that nothing reads. Should I remove them?"
+```
+
+```text
+User: Update the button label to "Shop now".
+
+❌ BAD — also refactor nearby markup, rename classes, or restyle the button
+✅ GOOD — change the label; ask before any structural or style extras
+```
+
+## Allowed without asking
+
+- Fixes strictly required for the requested change to work (e.g. a missing variable the new code needs)
+- Corrections the user already approved in this chat
+- Following standing user/project rules that apply to the code you were asked to touch
+
+When unsure whether something is in scope, treat it as out of scope and ask.

@@ -1,0 +1,20 @@
+---
+description: Avoid unnecessary comments; only comment when it adds real value
+alwaysApply: true
+---
+
+# Minimal Comments
+
+Do not add comments unless absolutely necessary. Comments should explain non-obvious intent, trade-offs, or constraints the code cannot convey on its own. Never narrate what the code plainly does.
+
+Delete/avoid clutter comments like this:
+
+```liquid
+{% comment %} Match the JS card slot width: 1200px section width divided by columns per row {% endcomment %}
+```
+
+Guidelines:
+- No comments that restate the code (e.g. `// increment counter`, `// import module`).
+- No TODO/placeholder comments promising future work.
+- Prefer clear names over explanatory comments.
+- When a comment is genuinely warranted, keep it to one concise line explaining *why*, not *what*.

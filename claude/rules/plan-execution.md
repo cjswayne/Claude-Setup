@@ -1,0 +1,46 @@
+---
+description: "When executing a plan from .cursor/plans/, dispatch subagents with prompts verbatim from the plan file. Do not paraphrase, expand, or summarize."
+paths:
+  - ".cursor/plans/**/*.plan.md"
+---
+
+# Plan execution fidelity
+
+When the active plan file (in `.cursor/plans/`) contains `Agent(...)` blocks
+under an `## Execution: Subagent dispatch` section, you MUST dispatch them
+faithfully. The plan author chose the wording intentionally; the
+plan-reviewer audited THAT wording, not your re-interpretation of it.
+
+## Rules
+
+1. **Verbatim by default.** Copy the `prompt=` field byte-for-byte into your
+   `Agent` tool call. Same for `subagent_type` and `description`.
+2. **Explicit verbatim marker.** If the line `<!-- plan-execution: verbatim-prompt -->`
+   appears immediately before a Task code block, treat the prompt as
+   strictly verbatim. No edits except (3).
+3. **Allowed substitutions only.** You may replace documented placeholders
+   that the plan explicitly defines as fill-ins (e.g. `<PATH>`,
+   `<LOG_FILE_PATH>`, `<PHASE_N>`). If the placeholder is not documented in
+   the plan, ask the user instead of guessing.
+4. **No silent additions.** Do not inline plan context (Architecture, Data
+   Flow, Caveats) into the prompt. The plan tells the subagent to read
+   those sections — let it.
+5. **No silent omissions.** Do not drop numbered requirements, even if you
+   think they are redundant or covered elsewhere.
+6. **No user-rule injection.** Do not bolt on "always log caught errors",
+   "use ES6", or other standing rules. Those propagate via Claude Code's own
+   rule system (CLAUDE.md / .claude/rules). Adding them to the prompt is duplication and drift.
+7. **Concurrency stays as written.** If the plan says "run these three
+   concurrently in a single message," do exactly that. If it says serial,
+   serialize.
+8. **If the prompt feels wrong, STOP.** Surface the gap to the user and
+   propose an edit to the plan file. Do not patch it in the dispatch.
+
+## Quick self-check before each Task call
+
+- [ ] Is the `prompt=` string identical to the plan's `prompt=` string
+      (ignoring only allowed placeholder substitutions)?
+- [ ] Is `subagent_type` the same as in the plan?
+- [ ] Is the concurrency (single-message batch vs. serial) the same?
+
+If any answer is "no", revise before sending — or pause and ask the user.

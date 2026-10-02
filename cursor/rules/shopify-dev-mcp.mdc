@@ -1,0 +1,27 @@
+---
+description: Use the Shopify Dev MCP server to get latest API docs, validate GraphQL, and validate components whenever working with Shopify APIs
+alwaysApply: true
+---
+
+# Shopify Dev MCP — Always Use for Shopify API Work
+
+When any task involves Shopify APIs (Admin GraphQL, Storefront, Functions, Liquid, Polaris, Checkout, POS, etc.), use the `user-shopify-dev-mcp` MCP server instead of relying on trained knowledge or web search.
+
+## Workflow
+
+1. **Start with `learn_shopify_api`** — call it first to get a `conversationId`. Always include the `model` and `user_prompt` parameters. Select the correct `api` value for the task (e.g., `admin`, `custom-data`, `functions`, `liquid`, `polaris-app-home`).
+2. **Search before writing code** — call `search_docs_chunks` with the `conversationId` to find current examples, field definitions, and patterns. Do not guess at field names or mutation inputs.
+3. **Write code** using the search results.
+4. **Validate after writing code:**
+   - GraphQL queries/mutations: call `validate_graphql_codeblocks`
+   - Polaris/POS/Checkout components: call `validate_component_codeblocks`
+   - Liquid/theme files: call `validate_theme`
+5. **If validation fails**, search for the specific error, fix, and re-validate (max 3 retries).
+
+## Key Rules
+
+- Do NOT search the web for Shopify API information. The MCP returns the latest docs.
+- If the task switches to a different Shopify API surface mid-conversation, call `learn_shopify_api` again with the new `api` value and the same `conversationId`.
+- Always prefer GraphQL over REST for the Shopify Admin API.
+- Use the latest API version unless a specific version is requested.
+- When metafields or metaobjects are mentioned, use `api: "custom-data"` first.

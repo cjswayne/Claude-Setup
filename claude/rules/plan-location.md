@@ -1,0 +1,16 @@
+---
+description: "Where to save generated plans"
+---
+
+# Plan File Location
+
+When a plan is made, save it inside the relevant project repository's own
+`.cursor/plans/` directory. Never write plans to a root-level or user-level
+`.cursor` directory (e.g. `~/.cursor` / `C:\Users\<user>\.cursor`).
+
+- ✅ GOOD: `<project-repo>/.cursor/plans/my_feature_1234abcd.plan.md`
+- ❌ BAD: `C:\Users\<user>\.cursor\plans\my_feature_1234abcd.plan.md`
+
+If the workspace has multiple repos, put the plan in the repo the plan is
+actually about. Create the `.cursor/plans/` directory in that repo if it does
+not exist yet.

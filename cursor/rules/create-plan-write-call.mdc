@@ -1,0 +1,84 @@
+---
+description: How to save a plan file — Write stub then StrReplace via executor; never CreatePlan
+alwaysApply: true
+---
+
+# Creating a plan file: Write tool call
+
+Even in Plan mode, do **not** use `CreatePlan`. That tool may appear in the tool list; ignore it. Save the plan with **Write** (then **StrReplace**). There is no `raw` parameter on Write.
+
+Use exactly two named parameters on Write:
+
+- `path` (string): `<project-repo>/.cursor/plans/<slug>_<8hex>.plan.md`
+- `contents` (string): the stub or document markdown as plain text
+
+Pass them as separate fields. Do not wrap them in a JSON string.
+
+## Who writes the file
+
+The planning parent (the agent that researched the plan) must **not** issue the full-body Write or StrReplace after a long research session. Author the markdown, then dispatch `Task(subagent_type="executor")` with the absolute path and the full plan text. The executor performs the file writes in a fresh context.
+
+## Two-step write (mandatory)
+
+Do not put the full plan in the first Write. Large `contents` triggers the `input: "{...}"` wrap.
+
+1. Write a short stub only (frontmatter + title + `STUB — executor will replace this body.`, under ~30 lines).
+2. StrReplace that stub line with the full plan body.
+3. If a full-body StrReplace still wraps as `input`/`raw`, split into section-sized StrReplace chunks.
+
+## Correct (stub Write)
+
+```
+Write
+  path:     C:/Users/me/proj/.cursor/plans/feature_name_a1b2c3d4.plan.md
+  contents: ---
+            name: Feature Name
+            overview: What the plan does.
+            todos:
+              - id: first-step
+                content: Do the first step in path/to/file.js
+                status: pending
+            isProject: false
+            ---
+
+            # Feature Name
+
+            STUB — executor will replace this body.
+```
+
+`contents` is the document itself, not a JSON-encoded copy of the document.
+
+## Incorrect
+
+```
+CreatePlan
+  name: ...
+```
+
+```
+Write
+  raw: {"path":"...","contents":"..."}
+```
+
+```
+Write
+  input: "{\"path\":\"...\",\"contents\":\"...\"}"
+```
+
+- Do not call `CreatePlan`, even when Plan mode lists it
+- Do not use a `raw`, `input`, `file`, or `data` parameter
+- Do not stringify the whole argument (`"{\"path\":...}"`)
+- Do not send `path` without `contents`
+- Do not put the full plan in the first Write
+- Do not have the research parent Write the full plan itself
+- Do not double-encode markdown (no extra JSON escaping of the plan body)
+- Do not write to `~/.cursor/plans/` (see `plan-location`)
+
+## Self-check before sending
+
+1. The tool name is `Write` or `StrReplace`, never `CreatePlan`
+2. Parameter names are only `path` and `contents` (Write) or `path` / `old_string` / `new_string` (StrReplace)
+3. `path` is a path string, not an object
+4. The first Write is a stub, not the full plan
+5. An executor is performing the write, not the exhausted parent
+6. The call is not a JSON blob and does not use `raw` or `input`

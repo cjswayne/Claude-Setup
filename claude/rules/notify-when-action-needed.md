@@ -1,4 +1,4 @@
-# Flag User Action: ALL CAPS + Windows Notification
+# Flag User Action: Windows Notification
 
 The user often has the Claude tab open while looking at something else. When you need them, make it impossible to miss.
 
@@ -9,7 +9,7 @@ The user often has the Claude tab open while looking at something else. When you
 
 ## Required behavior
 
-1. **Write the request in ALL CAPS** in your chat response so it stands out, e.g. `PLEASE LOG IN TO SHOPIFY IN THE BROWSER PANE, THEN TELL ME WHEN YOU'RE DONE.`
+1. **State the request clearly in normal case** in your chat response (do not use ALL CAPS), e.g. `Please log in to Shopify in the browser pane, then tell me when you're done.`
 2. **Send a Windows toast notification right before you stop and wait.** Run it from the Bash tool:
 
    ```bash
@@ -22,8 +22,8 @@ The user often has the Claude tab open while looking at something else. When you
    & "$env:USERPROFILE\.claude\rules\scripts\notify-user.ps1" -Message "Log in to Shopify in the browser pane"
    ```
 
-   - Keep `-Message` short (under ~80 chars) and say what is needed. Normal case is fine in the toast.
+   - Keep `-Message` short (under ~80 chars) and say what is needed.
    - Optional `-Title` overrides the default "Claude needs you".
    - Never put secrets, tokens, or personal data in the message.
 3. Send **one** toast per wait point. Don't toast for routine end-of-task summaries where nothing is needed from the user.
-4. If the toast command fails, mention it briefly and continue; still use ALL CAPS.
+4. If the toast command fails, mention it briefly and continue.

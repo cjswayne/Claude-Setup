@@ -1,14 +1,14 @@
 ---
-description: "How to save a plan file — executor writes a stub with Write, then Edits in the body; the project plan lives in .cursor/plans, not ~/.claude/plans"
+description: "How to save a plan file — executor writes a stub with Write, then Edits in the body; the project plan lives in .claude/plans, not ~/.claude/plans"
 ---
 
 # Creating a plan file: Write tool call
 
-Claude Code's plan mode keeps its own scratch plan under `~/.claude/plans/`. That file is only for the ExitPlanMode approval step — it is **not** the project plan. Once the plan is approved (or when not in plan mode), save the project plan to `<project-repo>/.cursor/plans/<slug>_<8hex>.plan.md` with **Write** (then **Edit**).
+Claude Code's plan mode keeps its own scratch plan under `~/.claude/plans/`. That file is only for the ExitPlanMode approval step — it is **not** the project plan. Once the plan is approved (or when not in plan mode), save the project plan to `<project-repo>/.claude/plans/<slug>_<8hex>.plan.md` with **Write** (then **Edit**).
 
 Use exactly two named parameters on Write:
 
-- `file_path` (string): `<project-repo>/.cursor/plans/<slug>_<8hex>.plan.md` (absolute)
+- `file_path` (string): `<project-repo>/.claude/plans/<slug>_<8hex>.plan.md` (absolute)
 - `content` (string): the stub or document markdown as plain text
 
 Pass them as separate fields. Do not wrap them in a JSON string.
@@ -29,7 +29,7 @@ Do not put the full plan in the first Write.
 
 ```
 Write
-  file_path: C:/Users/me/proj/.cursor/plans/feature_name_a1b2c3d4.plan.md
+  file_path: C:/Users/me/proj/.claude/plans/feature_name_a1b2c3d4.plan.md
   content:   ---
              name: Feature Name
              overview: What the plan does.
@@ -66,13 +66,13 @@ Write
 - Do not put the full plan in the first Write
 - Do not have the research parent Write the full plan itself
 - Do not double-encode markdown (no extra JSON escaping of the plan body)
-- Do not write to `~/.cursor/plans/` (see `plan-location`)
+- Do not write to `~/.claude/plans/` (plan-mode scratch) or any `.cursor` directory (see `plan-location`)
 
 ## Self-check before sending
 
 1. The tool name is `Write` or `Edit`
 2. Parameter names are only `file_path` and `content` (Write) or `file_path` / `old_string` / `new_string` (Edit)
-3. `file_path` is an absolute path string under the project's `.cursor/plans/`, not an object
+3. `file_path` is an absolute path string under the project's `.claude/plans/`, not an object
 4. The first Write is a stub, not the full plan
 5. An executor is performing the write, not the exhausted parent
 6. The call is not a JSON blob and does not use `raw` or `input`

@@ -78,7 +78,7 @@ Prefer snapshot roles, names, and labels over invented test ids. Re-snapshot aft
 
 Write screenshots and a short visual note under:
 
-`~/.cursor/docs/verifier/artifacts/<repo-or-project-slug>-<feature-slug>-<YYYYMMDD-HHmm>/`
+`~/.claude/docs/verifier/artifacts/<repo-or-project-slug>-<feature-slug>-<YYYYMMDD-HHmm>/`
 
 - `screenshots/` — one PNG per meaningful step
 - Mention the artifact directory path in the final summary

@@ -32,6 +32,6 @@ files.
    files list (route scoping only), target product/page handles, and
    `PREVIEW_URL`.
 3. Docs and artifacts stay under
-   `~/.cursor/docs/shopify-theme-feature-qa/` — never inside the theme folder.
+   `~/.claude/docs/shopify-theme-feature-qa/` — never inside the theme folder.
 
-See `~/.cursor/docs/shopify-theme-feature-qa/loadability-runbook.md`.
+See `~/.claude/docs/shopify-theme-feature-qa/loadability-runbook.md`.

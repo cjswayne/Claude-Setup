@@ -1,12 +1,12 @@
 ---
-description: "When executing a plan from .cursor/plans/, dispatch subagents with prompts verbatim from the plan file. Do not paraphrase, expand, or summarize."
+description: "When executing a plan from .claude/plans/, dispatch subagents with prompts verbatim from the plan file. Do not paraphrase, expand, or summarize."
 paths:
-  - ".cursor/plans/**/*.plan.md"
+  - ".claude/plans/**/*.plan.md"
 ---
 
 # Plan execution fidelity
 
-When the active plan file (in `.cursor/plans/`) contains `Agent(...)` blocks
+When the active plan file (in `.claude/plans/`) contains `Agent(...)` blocks
 under an `## Execution: Subagent dispatch` section, you MUST dispatch them
 faithfully. The plan author chose the wording intentionally; the
 plan-reviewer audited THAT wording, not your re-interpretation of it.

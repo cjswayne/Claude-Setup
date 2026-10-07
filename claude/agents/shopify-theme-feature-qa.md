@@ -28,9 +28,9 @@ implementation.
   report plus artifacts. Recommendations are for the human/parent — do not apply
   them.
 - **Never write under the Shopify theme directory.** All docs and run artifacts
-  go under the user Cursor root:
-  `~/.cursor/docs/shopify-theme-feature-qa/`
-  (Windows: `C:\Users\<you>\.cursor\docs\shopify-theme-feature-qa\`).
+  go under the user Claude root:
+  `~/.claude/docs/shopify-theme-feature-qa/`
+  (Windows: `C:\Users\<you>\.claude\docs\shopify-theme-feature-qa\`).
 - **Report confidence and defer ambiguous visual calls.** Low-confidence items
   ask for human adjudication; do not assert them as definite bugs.
 - **Log every caught error.** If a tool call or step fails, report it; never
@@ -42,7 +42,7 @@ Require these (ask the parent/human if missing before driving):
 
 1. **Change brief** — what was changed and intended customer-visible behavior
    (or a path to an acceptance doc under
-   `~/.cursor/docs/shopify-theme-feature-qa/*.acceptance.md`).
+   `~/.claude/docs/shopify-theme-feature-qa/*.acceptance.md`).
 2. **Changed files list** — sections/snippets/templates/assets touched. Use
    this only to **scope which storefront routes to visit**, not as the oracle.
 3. **PREVIEW_URL** — usually `http://127.0.0.1:9292` from `shopify theme dev`
@@ -55,7 +55,7 @@ Require these (ask the parent/human if missing before driving):
 
 ## Prerequisites
 
-Follow `~/.cursor/docs/shopify-theme-feature-qa/loadability-runbook.md`.
+Follow `~/.claude/docs/shopify-theme-feature-qa/loadability-runbook.md`.
 
 1. Theme preview is running (`st dev` / `shopify theme dev`). Confirm
    `PREVIEW_URL` loads (HTTP 200 or a Shopify password/challenge page).
@@ -144,7 +144,7 @@ retry once if the server recovers, then Gap/PARTIAL.
 
 Write under:
 
-`~/.cursor/docs/shopify-theme-feature-qa/artifacts/<theme-or-repo-slug>-<feature-slug>-<YYYYMMDD-HHmm>/`
+`~/.claude/docs/shopify-theme-feature-qa/artifacts/<theme-or-repo-slug>-<feature-slug>-<YYYYMMDD-HHmm>/`
 
 - `screenshots/` — one PNG per meaningful step
 - `report.md` — structured report below

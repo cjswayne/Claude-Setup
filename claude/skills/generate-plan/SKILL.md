@@ -7,7 +7,7 @@ description: Generates detailed implementation plans for coding tasks. Used when
 
 ## Overview
 
-This skill produces implementation plans in the project's standard format (YAML frontmatter + markdown body, saved to `.cursor/plans/`). The planning parent authors the markdown; a fresh `executor` writes the file (stub `Write`, then `Edit` the body). In Claude Code plan mode, the built-in `~/.claude/plans/` file is only for ExitPlanMode approval — the project plan still goes to `.cursor/plans/`. Before writing the plan, it resolves ambiguity with the user, researches unknowns, and extracts existing codebase patterns that new code must match. Each plan document must spell out **when** `/executor`, `/test-runner`, and `/verifier` should be used during plan execution, and **when those delegations may run concurrently** (independent file areas, disjoint test suites, parallel validation where ordering does not matter). As soon as the **first draft** of the plan file exists on disk, run `/plan-reviewer` (delegate to the `plan-reviewer` subagent) to audit it; do not wait for polish passes before the initial review unless you are only fixing obvious typos before save.
+This skill produces implementation plans in the project's standard format (YAML frontmatter + markdown body, saved to `.claude/plans/`). The planning parent authors the markdown; a fresh `executor` writes the file (stub `Write`, then `Edit` the body). In Claude Code plan mode, the built-in `~/.claude/plans/` file is only for ExitPlanMode approval — the project plan still goes to `.claude/plans/`. Before writing the plan, it resolves ambiguity with the user, researches unknowns, and extracts existing codebase patterns that new code must match. Each plan document must spell out **when** `/executor`, `/test-runner`, and `/verifier` should be used during plan execution, and **when those delegations may run concurrently** (independent file areas, disjoint test suites, parallel validation where ordering does not matter). As soon as the **first draft** of the plan file exists on disk, run `/plan-reviewer` (delegate to the `plan-reviewer` subagent) to audit it; do not wait for polish passes before the initial review unless you are only fixing obvious typos before save.
 
 ## Workflow
 
@@ -75,11 +75,11 @@ Before writing the plan, identify the **analogous existing code** in the codebas
 
 ### Phase 3: Write the Plan
 
-Generate a slug from the plan name with a random hex suffix (e.g., `feature_name_a1b2c3d4.plan.md`). Save under the **project** `.cursor/plans/` directory (never `~/.cursor/plans/`).
+Generate a slug from the plan name with a random hex suffix (e.g., `feature_name_a1b2c3d4.plan.md`). Save under the **project** `.claude/plans/` directory (never `~/.claude/plans/`, which is plan-mode scratch, and never any `.cursor` directory).
 
 #### Step 1 — Tool contract (mandatory, before any save)
 
-If you are in plan mode, draft in the built-in plan file and call ExitPlanMode for approval first; the project plan is then saved to `.cursor/plans/` with `Write` (plan mode only allows writing its own plan file).
+If you are in plan mode, draft in the built-in plan file and call ExitPlanMode for approval first; the project plan is then saved to `.claude/plans/` with `Write` (plan mode only allows writing its own plan file).
 
 Call `Write` with exactly two **named parameters as separate fields**. Do not wrap them in a JSON string. Do not use `raw`, `input`, `file`, or `data`.
 
@@ -87,7 +87,7 @@ Copy-paste shape (stub only — see Step 2):
 
 ```
 Write
-  file_path: C:/Users/me/proj/.cursor/plans/feature_name_a1b2c3d4.plan.md
+  file_path: C:/Users/me/proj/.claude/plans/feature_name_a1b2c3d4.plan.md
   content:   ---
             name: Feature Name
             overview: What the plan does.
@@ -277,7 +277,7 @@ Concrete patterns from the existing codebase that all new code must match. Each 
 
 ### Phase 4: Audit via plan-reviewer (first draft)
 
-When the **first draft** of the plan is created and saved under `.cursor/plans/` (the executor from Phase 3 Step 3 has returned the absolute path), **immediately** run `/plan-reviewer` by delegating to the `plan-reviewer` subagent. Treat this as the standard moment for the initial audit; if the verdict is **REJECT** or **REVISE**, revise the plan and **run `/plan-reviewer` again** on the updated draft until the audit outcome is acceptable per the rules below.
+When the **first draft** of the plan is created and saved under `.claude/plans/` (the executor from Phase 3 Step 3 has returned the absolute path), **immediately** run `/plan-reviewer` by delegating to the `plan-reviewer` subagent. Treat this as the standard moment for the initial audit; if the verdict is **REJECT** or **REVISE**, revise the plan and **run `/plan-reviewer` again** on the updated draft until the audit outcome is acceptable per the rules below.
 
 **Delegation instructions:**
 
@@ -287,7 +287,7 @@ Use the `Agent` tool with `subagent_type="plan-reviewer"`:
 Agent(
   subagent_type="plan-reviewer",
   description="Audit implementation plan",
-  prompt="Audit the following plan file: .cursor/plans/<filename>.plan.md
+  prompt="Audit the following plan file: .claude/plans/<filename>.plan.md
 
 Read the plan file and the plan-reviewer agent instructions at .claude/agents/plan-reviewer.md.
 
@@ -324,7 +324,7 @@ Before considering the plan complete, verify:
 - [ ] All ambiguous points from the user's request were resolved (Phase 1)
 - [ ] All unknowns were researched, not assumed (Phase 2)
 - [ ] Existing codebase patterns were extracted with file paths, line numbers, and code snippets (Phase 2b)
-- [ ] Project plan saved under `.cursor/plans/` (not only in plan mode's `~/.claude/plans/`); save used `Write` with separate `file_path` and `content` fields — no `raw`/`input` JSON wrap
+- [ ] Project plan saved under `.claude/plans/` (not only in plan mode's `~/.claude/plans/`); save used `Write` with separate `file_path` and `content` fields — no `raw`/`input` JSON wrap
 - [ ] Planning parent did not write the full plan file; an `executor` wrote a stub, then `Edit`'d the body
 - [ ] Plan follows the project's YAML frontmatter + markdown format (structure only — not old-plan deferral slang)
 - [ ] No invented product `v1`/`v2`/`MVP`-as-sequel language; caveats use this-plan / out-of-scope framing (unless the user named versions)
